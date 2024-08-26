@@ -41,11 +41,12 @@ function module.apply(config)
 			action = act.CloseCurrentPane({ confirm = true }),
 		},
 
-		-- {
-		-- 	key = "h",
-		-- 	mods = "CMD",
-		-- 	action = act.DisableDefaultAssignment,
-		-- },
+		{
+			-- disable default debug keybinding
+			key = "L",
+			mods = "CTRL",
+			action = act.DisableDefaultAssignment,
+		},
 
 		{
 			key = "LeftArrow",
