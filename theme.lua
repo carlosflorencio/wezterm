@@ -1,9 +1,11 @@
 local wezterm = require("wezterm")
 local module = {}
 
+local bg_color = "black"
+
 local function custom_theme()
-	local my_theme = wezterm.color.get_builtin_schemes()["Ayu Dark (Gogh)"]
-	my_theme.background = "black"
+	local my_theme = wezterm.color.get_builtin_schemes()["Vs Code Dark+ (Gogh)"]
+	my_theme.background = bg_color
 
 	return my_theme
 end
@@ -14,6 +16,7 @@ function module.apply(config)
 	}
 	config.color_scheme = "My Theme"
 
+	-- hide title bar
 	config.window_decorations = "RESIZE"
 
 	-- Set coloring for inactive panes to be less bright than your active pane
@@ -35,7 +38,7 @@ function module.apply(config)
 	config.tab_bar_at_bottom = true
 
 	config.window_frame = {
-		active_titlebar_bg = "black",
+		active_titlebar_bg = bg_color,
 	}
 
 	config.colors = {
@@ -45,15 +48,15 @@ function module.apply(config)
 				fg_color = "white",
 			},
 			inactive_tab = {
-				bg_color = "black",
+				bg_color = bg_color,
 				fg_color = "#808080",
 			},
 			new_tab = {
-				bg_color = "black",
+				bg_color = bg_color,
 				fg_color = "#808080",
 			},
 			-- The color of the inactive tab bar edge/divider
-			inactive_tab_edge = "black",
+			inactive_tab_edge = bg_color,
 		},
 	}
 end
