@@ -9,7 +9,11 @@ config.default_prog = { "/opt/homebrew/bin/fish", "-l" }
 -- Font
 -- wezterm bundles nerd fonts, it will be used as fallback
 config.font = wezterm.font("JetBrains Mono")
-config.font_size = 14.0
+config.font_size = 13.5
+-- disable ligatures
+config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
+
+-- =>
 
 -- Theme
 theme.apply(config)

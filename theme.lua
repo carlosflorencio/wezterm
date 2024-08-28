@@ -21,8 +21,8 @@ function module.apply(config)
 
 	-- Set coloring for inactive panes to be less bright than your active pane
 	config.inactive_pane_hsb = {
-		hue = 0.5,
-		saturation = 0.5,
+		-- hue = 0.5,
+		-- saturation = 0.5,
 		brightness = 0.6,
 	}
 
