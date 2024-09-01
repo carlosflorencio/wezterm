@@ -59,6 +59,18 @@ function module.apply(config)
 			action = act.ActivateTabRelative(1),
 		},
 
+		-- move tabs
+		{
+			key = "LeftArrow",
+			mods = "CMD|ALT|SHIFT",
+			action = act.MoveTabRelative(-1),
+		},
+		{
+			key = "RightArrow",
+			mods = "CMD|ALT|SHIFT",
+			action = act.MoveTabRelative(1),
+		},
+
 		{
 			key = "/",
 			mods = "CMD",
