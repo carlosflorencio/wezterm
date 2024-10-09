@@ -38,7 +38,7 @@ function module.apply(config)
 		{
 			key = "w",
 			mods = "CMD",
-			action = act.CloseCurrentPane({ confirm = true }),
+			action = act.CloseCurrentPane({ confirm = false }),
 		},
 
 		{
