@@ -94,6 +94,48 @@ function module.apply(config)
 			mods = "CMD",
 			action = act.ActivateCommandPalette,
 		},
+		{
+			key = "f",
+			mods = "CMD",
+			action = act.Search("CurrentSelectionOrEmptyString"),
+		},
+	}
+
+	local search_mode = nil
+	local copy_mode = nil
+	if wezterm.gui then
+		-- copy mode
+		copy_mode = wezterm.gui.default_key_tables().copy_mode
+		table.insert(
+			copy_mode,
+			{ key = "/", mods = "NONE", action = wezterm.action({ Search = { CaseSensitiveString = "" } }) }
+		)
+
+		-- search mode
+		search_mode = wezterm.gui.default_key_tables().search_mode
+		table.insert(search_mode, { key = "c", mods = "CTRL", action = act.CopyMode("ClearPattern") })
+		table.insert(search_mode, {
+			key = "Enter",
+			mods = "NONE",
+			action = act.Multiple({
+				act.CopyMode("ClearPattern"),
+				act.CopyMode("AcceptPattern"),
+				act.CopyMode({ SetSelectionMode = "Cell" }),
+			}),
+		})
+		table.insert(search_mode, {
+			key = "Escape",
+			mods = "NONE",
+			action = act.Multiple({
+				act.CopyMode("ClearPattern"),
+				act.CopyMode("Close"),
+			}),
+		})
+	end
+
+	config.key_tables = {
+		search_mode = search_mode,
+		copy_mode = copy_mode,
 	}
 end
 
