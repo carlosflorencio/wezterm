@@ -15,6 +15,10 @@ config.font_size = 13.5
 -- disable ligatures
 config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 
+-- Dead key accented characters, é, è, à, etc.
+-- glove80 right alt is actually left alt
+config.send_composed_key_when_left_alt_is_pressed = true
+
 -- Theme
 theme.apply(config)
 
