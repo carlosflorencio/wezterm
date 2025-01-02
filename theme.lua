@@ -19,11 +19,10 @@ function module.apply(config)
 	-- hide title bar
 	config.window_decorations = "RESIZE"
 
-	-- Set coloring for inactive panes to be less bright than your active pane
+	-- Don't dim inactive panes
 	config.inactive_pane_hsb = {
-		-- hue = 0.5,
-		-- saturation = 0.5,
-		brightness = 0.6,
+		saturation = 1,
+		brightness = 1,
 	}
 
 	config.window_padding = {
