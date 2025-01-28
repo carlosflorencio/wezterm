@@ -99,6 +99,11 @@ function module.apply(config)
 			mods = "CMD",
 			action = act.Search("CurrentSelectionOrEmptyString"),
 		},
+		{
+			key = "Enter",
+			mods = "ALT",
+			action = act.DisableDefaultAssignment,
+		},
 	}
 
 	local search_mode = nil
