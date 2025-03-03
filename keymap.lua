@@ -5,13 +5,30 @@ local nvim = require("nvim")
 local module = {}
 
 wezterm.on("trigger-vim-with-scrollback", function(window, pane)
-	-- Retrieve the text from the pane
-	local text = pane:get_lines_as_text(pane:get_dimensions().scrollback_rows)
+	local function get_zone_around_cursor(pane)
+		local cursor = pane:get_cursor_position()
+		-- y - 2 to take in consideration the prompt format is multiline
+		local zone = pane:get_semantic_zone_at(cursor.x, cursor.y - 2)
+		if zone then
+			return pane:get_text_from_semantic_zone(zone)
+		end
+		return nil
+	end
 
-	-- Create a temporary file to pass to vim
+	wezterm.log_info("trigger-vim-with-scrollback")
+	local output = get_zone_around_cursor(pane)
+
+	if output == nil then
+		wezterm.log_info("No output found")
+
+		-- Retrieve the text from the pane
+		output = pane:get_lines_as_text(pane:get_dimensions().scrollback_rows)
+	end
+
+	-- -- Create a temporary file to pass to vim
 	local name = os.tmpname()
 	local f = io.open(name, "w+")
-	f:write(text)
+	f:write(output)
 	f:flush()
 	f:close()
 
@@ -159,6 +176,11 @@ function module.apply(config)
 			key = "DownArrow",
 			mods = "CMD",
 			action = act.CopyMode({ MoveForwardZoneOfType = "Output" }),
+		})
+		table.insert(copy_mode, {
+			key = "i",
+			mods = "NONE",
+			action = act.CopyMode({ SetSelectionMode = "SemanticZone" }),
 		})
 
 		-- search mode
