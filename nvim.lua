@@ -8,6 +8,12 @@ local function is_vim(pane)
 	return pane:get_user_vars().IS_NVIM == "true"
 end
 
+local function is_k9s(pane)
+	local process_name = pane:get_foreground_process_name()
+	local is_k9s_process = process_name:find("k9s") ~= nil
+	return is_k9s_process
+end
+
 -- TODO: check if there are more than 1 pane in the tab, if no, fish accept suggestion
 local function panes_count(window)
 	-- Get the current tab
@@ -37,6 +43,14 @@ function module.split_nav(resize_or_move, key)
 		key = key,
 		mods = resize_or_move == "resize" and "META|SHIFT" or "CTRL",
 		action = w.action_callback(function(win, pane)
+			-- Skip the navigation override if we're in k9s and the key is 'k'
+			if key == "k" and is_k9s(pane) then
+				win:perform_action({
+					SendKey = { key = key, mods = "CTRL" },
+				}, pane)
+				return
+			end
+
 			if is_vim(pane) then
 				-- pass the keys through to vim/nvim
 				win:perform_action({
