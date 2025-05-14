@@ -69,6 +69,10 @@ function module.apply(config)
 		nvim.split_nav("resize", "k"),
 		nvim.split_nav("resize", "l"),
 
+		-- jump to previous commands/prompts
+		{ key = "UpArrow", mods = "CMD", action = wezterm.action.ScrollToPrompt(-1) },
+		{ key = "DownArrow", mods = "CMD", action = wezterm.action.ScrollToPrompt(1) },
+
 		{
 			key = "e",
 			mods = "CMD",
