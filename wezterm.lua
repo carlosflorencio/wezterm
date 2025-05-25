@@ -12,10 +12,14 @@ config.max_fps = 120 -- 60 default, will waste cpu/gpu if monitor is only 60hz
 
 -- Font
 -- wezterm bundles nerd fonts, it will be used as fallback
-config.font = wezterm.font("JetBrains Mono")
+config.font = wezterm.font("JetBrains Mono", { weight = "Regular" })
 config.font_size = 13.5
+-- config.line_height = 1.2
 -- disable ligatures
 config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
+
+-- better font antialiasing algo, similar to jetbrains greyscale
+config.freetype_load_target = "HorizontalLcd" -- or 'Normal', 'Light'
 
 -- Dead key accented characters, é, è, à, etc.
 -- glove80 right alt is actually left alt
