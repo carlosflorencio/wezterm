@@ -58,12 +58,12 @@ function module.apply(config)
 
 	config.keys = {
 
-		-- move between split panes
+		-- move between split panes ctrl + h/j/k/l
 		nvim.split_nav("move", "h"),
 		nvim.split_nav("move", "j"),
 		nvim.split_nav("move", "k"),
 		nvim.split_nav("move", "l"),
-		-- resize panes
+		-- resize panes with meta + shift + h/j/k/l
 		nvim.split_nav("resize", "h"),
 		nvim.split_nav("resize", "j"),
 		nvim.split_nav("resize", "k"),
