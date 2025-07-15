@@ -43,14 +43,7 @@ function module.split_nav(resize_or_move, key)
     mods = resize_or_move == "resize" and "META|SHIFT" or "CTRL",
     action = w.action_callback(function(win, pane)
       -- Skip the navigation override if we're in k9s and the key is 'k'
-      if key == "k" and (is_process(pane, "k9s") or is_process(pane, "opencode")) then
-        win:perform_action({
-          SendKey = { key = key, mods = "CTRL" },
-        }, pane)
-        return
-      end
-
-      if key == "l" and (is_process(pane, "opencode")) then
+      if key == "k" and (is_process(pane, "k9s")) then
         win:perform_action({
           SendKey = { key = key, mods = "CTRL" },
         }, pane)
