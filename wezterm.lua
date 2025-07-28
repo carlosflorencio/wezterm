@@ -44,7 +44,8 @@ config.scrollback_lines = 50000
 -- Custom quick select pattern for git branches
 config.quick_select_patterns = {
   -- Match feature/ or fix/ branch names up to whitespace
-  "(?:feature|fix)/\\S+",
+  -- not needed, matched by default patterns
+  -- "(?:feature|fix)/\\S+",
 }
 
 return config
