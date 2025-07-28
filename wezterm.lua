@@ -41,4 +41,10 @@ config.scrollback_lines = 50000
 -- launch wezterm from another terminal
 -- config.debug_key_events = true
 
+-- Custom quick select pattern for git branches
+config.quick_select_patterns = {
+  -- Match feature/ or fix/ branch names up to whitespace
+  "(?:feature|fix)/\\S+",
+}
+
 return config
