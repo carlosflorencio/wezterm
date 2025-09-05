@@ -50,6 +50,14 @@ function module.split_nav(resize_or_move, key)
         return
       end
 
+      -- Skip the navigation override if we're in lazygit and the key is 'j' or 'k'
+      if (key == "j" or key == "k") and is_process(pane, "lazygit") then
+        win:perform_action({
+          SendKey = { key = key, mods = "CTRL" },
+        }, pane)
+        return
+      end
+
       if is_vim(pane) then
         -- pass the keys through to vim/nvim
         win:perform_action({
