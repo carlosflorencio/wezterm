@@ -4,28 +4,22 @@ local nvim = require("nvim")
 
 local module = {}
 
+local function get_last_output(pane)
+	local cursor = pane:get_cursor_position()
+	-- y - 2 to take in consideration the prompt format is multiline
+	local zone = pane:get_semantic_zone_at(cursor.x, cursor.y - 2)
+	if zone then
+		return pane:get_text_from_semantic_zone(zone)
+	end
+	-- fallback: Retrieve the text from the pane
+	return pane:get_lines_as_text(pane:get_dimensions().scrollback_rows)
+end
+
 wezterm.on("trigger-vim-with-scrollback", function(window, pane)
-	local function get_zone_around_cursor(pane)
-		local cursor = pane:get_cursor_position()
-		-- y - 2 to take in consideration the prompt format is multiline
-		local zone = pane:get_semantic_zone_at(cursor.x, cursor.y - 2)
-		if zone then
-			return pane:get_text_from_semantic_zone(zone)
-		end
-		return nil
-	end
-
 	wezterm.log_info("trigger-vim-with-scrollback")
-	local output = get_zone_around_cursor(pane)
+	local output = get_last_output(pane)
 
-	if output == nil then
-		wezterm.log_info("No output found")
-
-		-- Retrieve the text from the pane
-		output = pane:get_lines_as_text(pane:get_dimensions().scrollback_rows)
-	end
-
-	-- -- Create a temporary file to pass to vim
+	-- Create a temporary file to pass to vim
 	local name = os.tmpname()
 	local f = io.open(name, "w+")
 	f:write(output)
@@ -48,6 +42,13 @@ wezterm.on("trigger-vim-with-scrollback", function(window, pane)
 	-- to avoid cluttering up the temporary directory.
 	wezterm.sleep_ms(1000)
 	os.remove(name)
+end)
+
+wezterm.on("copy-output-to-clipboard", function(window, pane)
+	wezterm.log_info("copy-output-to-clipboard")
+	local output = get_last_output(pane)
+	window:copy_to_clipboard(output, "Clipboard")
+	window:toast_notification("WezTerm", "Output copied to clipboard!", nil, 2000)
 end)
 
 function module.apply(config)
@@ -77,6 +78,11 @@ function module.apply(config)
 			key = "e",
 			mods = "CMD",
 			action = act.EmitEvent("trigger-vim-with-scrollback"),
+		},
+		{
+			key = "o",
+			mods = "CMD",
+			action = act.EmitEvent("copy-output-to-clipboard"),
 		},
 		{
 			key = "d",
