@@ -37,37 +37,68 @@ local direction_keys = {
   l = "Right",
 }
 
-function module.split_nav(resize_or_move, key)
-  return {
-    key = key,
-    mods = resize_or_move == "resize" and "META|SHIFT" or "CTRL",
-    action = w.action_callback(function(win, pane)
-      -- Skip the navigation override if we're in k9s and the key is 'k'
-      if key == "k" and (is_process(pane, "k9s")) then
-        win:perform_action({
-          SendKey = { key = key, mods = "CTRL" },
-        }, pane)
-        return
-      end
+local process_exceptions = {
+  k9s = {
+    { key = "k", mods = "CTRL" },
+  },
+  lazygit = {
+    { key = "j", mods = "CTRL" },
+    { key = "k", mods = "CTRL" },
+  },
+}
 
-      -- Skip the navigation override if we're in lazygit and the key is 'j' or 'k'
-      if (key == "j" or key == "k") and is_process(pane, "lazygit") then
-        win:perform_action({
-          SendKey = { key = key, mods = "CTRL" },
-        }, pane)
+local pane_title_exceptions = {
+  auggie = {
+    { key = "j", mods = "CTRL" },
+  },
+}
+
+local function should_pass_through_to_process(pane, direction, mods)
+  for process_name, exceptions in pairs(process_exceptions) do
+    if is_process(pane, process_name) then
+      for _, exception in ipairs(exceptions) do
+        if exception.key == direction and exception.mods == mods then
+          return true
+        end
+      end
+    end
+  end
+  return false
+end
+
+local function should_pass_through_to_title(pane, direction, mods)
+  local title = pane:get_title()
+  for title_pattern, exceptions in pairs(pane_title_exceptions) do
+    if title:find(title_pattern) then
+      for _, exception in ipairs(exceptions) do
+        if exception.key == direction and exception.mods == mods then
+          return true
+        end
+      end
+    end
+  end
+  return false
+end
+
+function module.smart_split_nav(opts)
+  local mods = opts.action == "resize" and "META|SHIFT" or "CTRL"
+
+  return {
+    key = opts.direction,
+    mods = mods,
+    action = w.action_callback(function(win, pane)
+      if should_pass_through_to_process(pane, opts.direction, mods) or should_pass_through_to_title(pane, opts.direction, mods) then
+        win:perform_action({ SendKey = { key = opts.direction, mods = mods } }, pane)
         return
       end
 
       if is_vim(pane) then
-        -- pass the keys through to vim/nvim
-        win:perform_action({
-          SendKey = { key = key, mods = resize_or_move == "resize" and "META|SHIFT" or "CTRL" },
-        }, pane)
+        win:perform_action({ SendKey = { key = opts.direction, mods = mods } }, pane)
       else
-        if resize_or_move == "resize" then
-          win:perform_action({ AdjustPaneSize = { direction_keys[key], 3 } }, pane)
+        if opts.action == "resize" then
+          win:perform_action({ AdjustPaneSize = { direction_keys[opts.direction], 3 } }, pane)
         else
-          win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
+          win:perform_action({ ActivatePaneDirection = direction_keys[opts.direction] }, pane)
         end
       end
     end),

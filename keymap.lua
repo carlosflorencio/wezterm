@@ -74,16 +74,16 @@ function module.apply(config)
 
   config.keys = {
 
-    -- move between split panes ctrl + h/j/k/l
-    nvim.split_nav("move", "h"),
-    nvim.split_nav("move", "j"),
-    nvim.split_nav("move", "k"),
-    nvim.split_nav("move", "l"),
-    -- resize panes with meta + shift + h/j/k/l
-    nvim.split_nav("resize", "h"),
-    nvim.split_nav("resize", "j"),
-    nvim.split_nav("resize", "k"),
-    nvim.split_nav("resize", "l"),
+		-- move between split panes ctrl + h/j/k/l
+		nvim.smart_split_nav({ action = "navigate", direction = "h" }),
+		nvim.smart_split_nav({ action = "navigate", direction = "j" }),
+		nvim.smart_split_nav({ action = "navigate", direction = "k" }),
+		nvim.smart_split_nav({ action = "navigate", direction = "l" }),
+		-- resize panes with meta + shift + h/j/k/l
+		nvim.smart_split_nav({ action = "resize", direction = "h" }),
+		nvim.smart_split_nav({ action = "resize", direction = "j" }),
+		nvim.smart_split_nav({ action = "resize", direction = "k" }),
+		nvim.smart_split_nav({ action = "resize", direction = "l" }),
 
     -- jump to previous commands/prompts
     { key = "UpArrow",   mods = "CMD", action = wezterm.action.ScrollToPrompt(-1) },
