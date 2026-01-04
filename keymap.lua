@@ -10,7 +10,23 @@ local function remap_key_for_app(opts)
     mods = opts.mods,
     action = wezterm.action_callback(function(win, pane)
       local title = pane:get_title()
-      if title:find(opts.when_title_matches) then
+      local pattern = opts.when_title_matches
+      local match = false
+      if pattern then
+        if pattern:find("|", 1, true) then
+          for token in pattern:gmatch("[^|]+") do
+            if title:find(token) then
+              match = true
+              break
+            end
+          end
+        else
+          if title:find(pattern) then
+            match = true
+          end
+        end
+      end
+      if match then
         win:perform_action(opts.send, pane)
       else
         win:perform_action({ SendKey = { key = opts.key, mods = opts.mods } }, pane)
@@ -183,7 +199,7 @@ function module.apply(config)
     remap_key_for_app({
       key = "Enter",
       mods = "SHIFT",
-      when_title_matches = "auggie",
+      when_title_matches = "auggie|claude",
       send = { SendKey = { key = "Enter", mods = "ALT" } },
     }),
   }
