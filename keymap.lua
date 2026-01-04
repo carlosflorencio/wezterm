@@ -4,15 +4,67 @@ local nvim = require("nvim")
 
 local module = {}
 
+-- Process names that should map SHIFT+ENTER to ALT+ENTER
+local shift_enter_processes = {
+  "claude",
+  "auggie",
+  -- Add more processes here as needed
+}
+
+-- Helper function to check if a process matches any in the list
+local function matches_shift_enter_process(process_name)
+  if not process_name then
+    return false
+  end
+  for _, name in ipairs(shift_enter_processes) do
+    if process_name:find(name) then
+      return true
+    end
+  end
+  return false
+end
+
+-- Helper function to remap a key based on process name or window title
+-- Example usage:
+-- remap_key_for_app({
+--   key = "j",
+--   mods = "CTRL",
+--   when_process_matches = "vim|nvim",  -- matches if process path contains vim or nvim
+--   when_title_matches = "NVIM",        -- fallback to title matching
+--   send = { SendKey = { key = "DownArrow" } },
+-- })
 local function remap_key_for_app(opts)
   return {
     key = opts.key,
     mods = opts.mods,
     action = wezterm.action_callback(function(win, pane)
-      local title = pane:get_title()
-      local pattern = opts.when_title_matches
       local match = false
-      if pattern then
+
+      -- Check process name if specified
+      if opts.when_process_matches then
+        local process_name = pane:get_foreground_process_name()
+        if process_name then
+          local pattern = opts.when_process_matches
+          -- Check if pattern appears anywhere in the process path
+          if pattern:find("|", 1, true) then
+            for token in pattern:gmatch("[^|]+") do
+              if process_name:find(token) then
+                match = true
+                break
+              end
+            end
+          else
+            if process_name:find(pattern) then
+              match = true
+            end
+          end
+        end
+      end
+
+      -- Fallback to title matching if no process match was specified or found
+      if not match and opts.when_title_matches then
+        local title = pane:get_title()
+        local pattern = opts.when_title_matches
         if pattern:find("|", 1, true) then
           for token in pattern:gmatch("[^|]+") do
             if title:find(token) then
@@ -26,6 +78,7 @@ local function remap_key_for_app(opts)
           end
         end
       end
+
       if match then
         win:perform_action(opts.send, pane)
       else
@@ -196,12 +249,19 @@ function module.apply(config)
       mods = "ALT",
       action = act.DisableDefaultAssignment,
     },
-    remap_key_for_app({
+    {
       key = "Enter",
       mods = "SHIFT",
-      when_title_matches = "auggie|claude",
-      send = { SendKey = { key = "Enter", mods = "ALT" } },
-    }),
+      action = wezterm.action_callback(function(win, pane)
+        local process_name = pane:get_foreground_process_name()
+
+        if matches_shift_enter_process(process_name) then
+          win:perform_action({ SendKey = { key = "Enter", mods = "ALT" } }, pane)
+        else
+          win:perform_action({ SendKey = { key = "Enter", mods = "SHIFT" } }, pane)
+        end
+      end),
+    },
   }
 
   local search_mode = nil
