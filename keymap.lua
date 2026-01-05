@@ -7,21 +7,37 @@ local module = {}
 -- Process names that should map SHIFT+ENTER to ALT+ENTER
 local shift_enter_processes = {
   "claude",
-  -- "auggie", -- auggie process name is a generic node
   -- Add more processes here as needed
 }
 
--- Helper function to check if a process matches any in the list
-local function matches_shift_enter_process(process_name)
+-- Panel titles that should map SHIFT+ENTER to ALT+ENTER
+local shift_enter_titles = {
+  "auggie",
+  -- Add more titles here as needed
+}
+
+-- Helper function to check if a process or title matches any in the lists
+local function matches_shift_enter(process_name, title)
   -- print('here[125]: keymap.lua:16: process_name=' .. process_name)
-  if not process_name then
-    return false
-  end
-  for _, name in ipairs(shift_enter_processes) do
-    if process_name:find(name) then
-      return true
+
+  -- Check process name
+  if process_name then
+    for _, name in ipairs(shift_enter_processes) do
+      if process_name:find(name) then
+        return true
+      end
     end
   end
+
+  -- Check title
+  if title then
+    for _, name in ipairs(shift_enter_titles) do
+      if title:find(name) then
+        return true
+      end
+    end
+  end
+
   return false
 end
 
@@ -255,8 +271,9 @@ function module.apply(config)
       mods = "SHIFT",
       action = wezterm.action_callback(function(win, pane)
         local process_name = pane:get_foreground_process_name()
+        local title = pane:get_title()
 
-        if matches_shift_enter_process(process_name) then
+        if matches_shift_enter(process_name, title) then
           win:perform_action({ SendKey = { key = "Enter", mods = "ALT" } }, pane)
         else
           win:perform_action({ SendKey = { key = "Enter", mods = "SHIFT" } }, pane)
