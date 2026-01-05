@@ -7,12 +7,13 @@ local module = {}
 -- Process names that should map SHIFT+ENTER to ALT+ENTER
 local shift_enter_processes = {
   "claude",
-  "auggie",
+  -- "auggie", -- auggie process name is a generic node
   -- Add more processes here as needed
 }
 
 -- Helper function to check if a process matches any in the list
 local function matches_shift_enter_process(process_name)
+  -- print('here[125]: keymap.lua:16: process_name=' .. process_name)
   if not process_name then
     return false
   end
@@ -143,16 +144,16 @@ function module.apply(config)
 
   config.keys = {
 
-		-- move between split panes ctrl + h/j/k/l
-		nvim.smart_split_nav({ action = "navigate", direction = "h" }),
-		nvim.smart_split_nav({ action = "navigate", direction = "j" }),
-		nvim.smart_split_nav({ action = "navigate", direction = "k" }),
-		nvim.smart_split_nav({ action = "navigate", direction = "l" }),
-		-- resize panes with meta + shift + h/j/k/l
-		nvim.smart_split_nav({ action = "resize", direction = "h" }),
-		nvim.smart_split_nav({ action = "resize", direction = "j" }),
-		nvim.smart_split_nav({ action = "resize", direction = "k" }),
-		nvim.smart_split_nav({ action = "resize", direction = "l" }),
+    -- move between split panes ctrl + h/j/k/l
+    nvim.smart_split_nav({ action = "navigate", direction = "h" }),
+    nvim.smart_split_nav({ action = "navigate", direction = "j" }),
+    nvim.smart_split_nav({ action = "navigate", direction = "k" }),
+    nvim.smart_split_nav({ action = "navigate", direction = "l" }),
+    -- resize panes with meta + shift + h/j/k/l
+    nvim.smart_split_nav({ action = "resize", direction = "h" }),
+    nvim.smart_split_nav({ action = "resize", direction = "j" }),
+    nvim.smart_split_nav({ action = "resize", direction = "k" }),
+    nvim.smart_split_nav({ action = "resize", direction = "l" }),
 
     -- jump to previous commands/prompts
     { key = "UpArrow",   mods = "CMD", action = wezterm.action.ScrollToPrompt(-1) },
