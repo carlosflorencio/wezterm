@@ -4,25 +4,24 @@ local nvim = require("nvim")
 
 local module = {}
 
--- Process names that should map SHIFT+ENTER to ALT+ENTER
-local shift_enter_processes = {
-  "claude",
+-- Process names that should NOT map SHIFT+ENTER to ALT+ENTER (exceptions)
+local shift_enter_exception_processes = {
+  "nvim",
   -- Add more processes here as needed
 }
 
--- Panel titles that should map SHIFT+ENTER to ALT+ENTER
-local shift_enter_titles = {
-  "auggie",
+-- Panel titles that should NOT map SHIFT+ENTER to ALT+ENTER (exceptions)
+local shift_enter_exception_titles = {
   -- Add more titles here as needed
 }
 
--- Helper function to check if a process or title matches any in the lists
-local function matches_shift_enter(process_name, title)
+-- Helper function to check if a process or title is an exception (should receive literal SHIFT+ENTER)
+local function is_shift_enter_exception(process_name, title)
   -- print('here[125]: keymap.lua:16: process_name=' .. process_name)
 
   -- Check process name
   if process_name then
-    for _, name in ipairs(shift_enter_processes) do
+    for _, name in ipairs(shift_enter_exception_processes) do
       if process_name:find(name) then
         return true
       end
@@ -31,7 +30,7 @@ local function matches_shift_enter(process_name, title)
 
   -- Check title
   if title then
-    for _, name in ipairs(shift_enter_titles) do
+    for _, name in ipairs(shift_enter_exception_titles) do
       if title:find(name) then
         return true
       end
@@ -273,10 +272,12 @@ function module.apply(config)
         local process_name = pane:get_foreground_process_name()
         local title = pane:get_title()
 
-        if matches_shift_enter(process_name, title) then
-          win:perform_action({ SendKey = { key = "Enter", mods = "ALT" } }, pane)
-        else
+        if is_shift_enter_exception(process_name, title) then
+          -- Exception: send literal SHIFT+ENTER (e.g., for nvim)
           win:perform_action({ SendKey = { key = "Enter", mods = "SHIFT" } }, pane)
+        else
+          -- Default: map SHIFT+ENTER to ALT+ENTER
+          win:perform_action({ SendKey = { key = "Enter", mods = "ALT" } }, pane)
         end
       end),
     },
