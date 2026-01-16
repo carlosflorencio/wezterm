@@ -43,8 +43,8 @@ function module.apply(config)
 	config.colors = {
 		tab_bar = {
 			active_tab = {
-				bg_color = "#223E55",
-				fg_color = "white",
+				bg_color = "#D0D0D0",
+				fg_color = "blue",
 			},
 			inactive_tab = {
 				bg_color = bg_color,
