@@ -35,7 +35,7 @@ keymap.apply(config)
 events.apply(wezterm, config)
 
 -- How many lines of scrollback you want to retain per tab
-config.scrollback_lines = 50000
+config.scrollback_lines = 100000
 
 -- Debug
 -- launch wezterm from another terminal
